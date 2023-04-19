@@ -85,16 +85,17 @@ has_qrencode() {
 }
 
 listgpg () {
-	mapfile -d '' pw_list < <(find -L . -name '*.gpg' -print0)
+	mapfile -d '' -t pw_list < <(find -L . -name '*.gpg' -print0)
 	pw_list=("${pw_list[@]#./}")
-	printf '%s\n' "${pw_list[@]}" | sort -n
+	mapfile -t sorted_pw_list < <(ls -t --time=atime "${pw_list[@]}")
+	printf '%s\n' "${sorted_pw_list[@]}"
 }
 
 # get all password files and output as newline-delimited text
 list_passwords() {
 	cd "${root}" || exit
 	mapfile -t pw_list < <(listgpg)
-	printf '%s\n' "${pw_list[@]%.gpg}" | sort -n
+	printf '%s\n' "${pw_list[@]%.gpg}"
 }
 
 doClip () {

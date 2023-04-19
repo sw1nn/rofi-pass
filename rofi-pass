@@ -94,7 +94,7 @@ listgpg () {
 # get all password files and output as newline-delimited text
 list_passwords() {
 	cd "${root}" || exit
-	mapfile -t pw_list < <(listgpg)
+	mapfile -t pw_list < <(listgpg | sed 's@.*/@<span color="#93A1A1">&</span>@')
 	printf '%s\n' "${pw_list[@]%.gpg}"
 }
 
@@ -390,7 +390,7 @@ mainMenu () {
 			args+=(-mesg "PW Store: ${root}")
 		fi
 
-		selected_password="$(list_passwords 2>/dev/null | _rofi "${args[@]}")"
+		selected_password="$(list_passwords 2>/dev/null | _rofi -markup-rows "${args[@]}")"
 
 		rofi_exit=$?
 		if [[ $rofi_exit -eq 1 ]]; then
